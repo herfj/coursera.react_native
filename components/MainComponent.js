@@ -1,10 +1,14 @@
 import React, { Component } from "react";
 import { View, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+	createStackNavigator,
+	createDrawerNavigator,
+} from "@react-navigation/stack";
 
 import Menu from "./MenuComponent";
 import Dishdetail from "./DishdetailComponent";
+import Home from "./HomeComponent";
 
 const MenuNavigator = createStackNavigator();
 
