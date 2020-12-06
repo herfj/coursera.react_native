@@ -22,7 +22,9 @@ class Menu extends Component {
 					subtitle={item.description}
 					hideChevron={true}
 					onPress={() => navigate("Dishdetail", { dishId: item.id })}
-					leftAvatar={{ source: require("./images/vadonut.png") }}
+					leftAvatar={{
+						source: { uri: require("./images/vadonut.png") },
+					}}
 				/>
 			);
 		};
