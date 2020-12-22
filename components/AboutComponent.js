@@ -5,6 +5,7 @@ import { Card } from "react-native-elements";
 import { LEADERS } from "../shared/leaders";
 import { connect } from "react-redux";
 import { baseUrl } from "../shared/baseUrl";
+import { Loading } from "./LoadingComponent";
 
 const mapStateToProps = (state) => {
 	return {
@@ -54,20 +55,39 @@ class AboutUs extends Component {
 				/>
 			);
 		};
-
-		return (
-			<ScrollView>
-				<RenderCardHistory />
-				<Card>
-					<Card.Title>Corporate Leaderships</Card.Title>
-					<FlatList
-						data={this.props.leaders.leaders}
-						renderItem={renderLeadersItem}
-						keyExtractor={(item) => item.id.toString()}
-					/>
-				</Card>
-			</ScrollView>
-		);
+		if (this.props.leaders.isLoading) {
+			return (
+				<ScrollView>
+					<RenderCardHistory />
+					<Card title="Corporate Leadership">
+						<Loading />
+					</Card>
+				</ScrollView>
+			);
+		} else if (this.props.leaders.errMess) {
+			return (
+				<ScrollView>
+					<RenderCardHistory />
+					<Card title="Corporate Leadership">
+						<Text>{this.props.leaders.errMess}</Text>
+					</Card>
+				</ScrollView>
+			);
+		} else {
+			return (
+				<ScrollView>
+					<RenderCardHistory />
+					<Card>
+						<Card.Title>Corporate Leaderships</Card.Title>
+						<FlatList
+							data={this.props.leaders.leaders}
+							renderItem={renderLeadersItem}
+							keyExtractor={(item) => item.id.toString()}
+						/>
+					</Card>
+				</ScrollView>
+			);
+		}
 	}
 }
 export default connect(mapStateToProps)(AboutUs);
