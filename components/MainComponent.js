@@ -17,6 +17,7 @@ import { Icon } from "react-native-elements";
 import SafeAreaView from "react-native-safe-area-view";
 import { connect } from "react-redux";
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from "../redux/ActionCreators";
+import Reservation from "./ReservationComponent";
 
 const mapStateToProps = (state) => {
 	return {
@@ -38,6 +39,7 @@ const MenuNavigator = createStackNavigator();
 const HomeNavigator = createStackNavigator();
 const ContactUsNavigator = createStackNavigator();
 const AboutUsNavigator = createStackNavigator();
+const ReservationNavigator = createStackNavigator();
 const MainNavigator = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => (
@@ -195,6 +197,39 @@ function AboutUsNavigatorScreen({ navigation }) {
 	);
 }
 
+function ReservationNavigatorScreen({ navigation }) {
+	return (
+		<ReservationNavigator.Navigator
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: "#512DA8",
+				},
+				headerTintColor: "#fff",
+				headerTitleStyle: {
+					color: "#fff",
+				},
+			}}
+		>
+			<ReservationNavigator.Screen
+				name="Reserve Table"
+				component={Reservation}
+				options={{
+					headerTitle: "Reserve Table",
+					headerLeft: () => (
+						<Icon
+							containerStyle={{ marginLeft: 10 }}
+							name="menu"
+							size={24}
+							color="white"
+							onPress={() => navigation.toggleDrawer()}
+						/>
+					),
+				}}
+			/>
+		</ReservationNavigator.Navigator>
+	);
+}
+
 function MainNavigatorScreen() {
 	return (
 		<MainNavigator.Navigator
@@ -235,6 +270,15 @@ function MainNavigatorScreen() {
 				options={{
 					drawerIcon: ({ tintColor, focused }) => (
 						<Icon name="address-card" type="font-awesome" size={24} color={tintColor} />
+					),
+				}}
+			/>
+			<MainNavigator.Screen
+				name="Reserve Table"
+				component={ReservationNavigatorScreen}
+				options={{
+					drawerIcon: ({ tintColor, focused }) => (
+						<Icon name="cutlery" type="font-awesome" size={24} color={tintColor} />
 					),
 				}}
 			/>
