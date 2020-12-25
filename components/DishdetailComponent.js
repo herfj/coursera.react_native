@@ -9,6 +9,7 @@ import { ActivityIndicator } from "react-native";
 import { Image } from "react-native-elements";
 import { postFavorite } from "../redux/ActionCreators";
 import { postComment } from "../redux/ActionCreators";
+import * as Animatable from "react-native-animatable";
 
 const mapStateToProps = (state) => {
 	return {
@@ -43,14 +44,16 @@ function RenderComments(props) {
 		);
 	};
 	return (
-		<Card>
-			<Card.Title>Comments</Card.Title>
-			<FlatList
-				data={comments}
-				renderItem={renderCommentItem}
-				keyExtractor={(item) => item.id.toString()}
-			/>
-		</Card>
+		<Animatable.View animation="fadeInUp" duration={2000} delay={1000}>
+			<Card>
+				<Card.Title>Comments</Card.Title>
+				<FlatList
+					data={comments}
+					renderItem={renderCommentItem}
+					keyExtractor={(item) => item.id.toString()}
+				/>
+			</Card>
+		</Animatable.View>
 	);
 }
 
@@ -58,36 +61,38 @@ function RenderDish(props) {
 	const dish = props.dish;
 	if (dish != null) {
 		return (
-			<Card>
-				<Card.Title>{dish.name}</Card.Title>
-				<Card.Divider />
-				<Image
-					source={{ uri: baseUrl + dish.image }}
-					style={{
-						width: 200,
-						height: 200,
-					}}
-				/>
-				<Text style={{ margin: 10 }}>{dish.description}</Text>
-				<Icon
-					raised
-					reverse
-					name={props.favorite ? "heart" : "heart-o"}
-					type="font-awesome"
-					color="#f50"
-					onPress={() =>
-						props.favorite ? console.log("Already favorite") : props.onPress()
-					}
-				/>
-				<Icon
-					raised
-					reverse
-					name="pencil"
-					type="font-awesome"
-					color="#512DA8"
-					onPress={() => props.onPress1()}
-				/>
-			</Card>
+			<Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+				<Card>
+					<Card.Title>{dish.name}</Card.Title>
+					<Card.Divider />
+					<Image
+						source={{ uri: baseUrl + dish.image }}
+						style={{
+							width: 200,
+							height: 200,
+						}}
+					/>
+					<Text style={{ margin: 10 }}>{dish.description}</Text>
+					<Icon
+						raised
+						reverse
+						name={props.favorite ? "heart" : "heart-o"}
+						type="font-awesome"
+						color="#f50"
+						onPress={() =>
+							props.favorite ? console.log("Already favorite") : props.onPress()
+						}
+					/>
+					<Icon
+						raised
+						reverse
+						name="pencil"
+						type="font-awesome"
+						color="#512DA8"
+						onPress={() => props.onPress1()}
+					/>
+				</Card>
+			</Animatable.View>
 		);
 	} else {
 		return <View></View>;
