@@ -12,6 +12,7 @@ import Dishdetail from "./DishdetailComponent";
 import Home from "./HomeComponent";
 import ContactUs from "./ContactComponent";
 import AboutUs from "./AboutComponent";
+import Favorite from "./FavoriteComponent";
 import { View, Platform, Text, ScrollView, Image, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
 import SafeAreaView from "react-native-safe-area-view";
@@ -40,6 +41,7 @@ const HomeNavigator = createStackNavigator();
 const ContactUsNavigator = createStackNavigator();
 const AboutUsNavigator = createStackNavigator();
 const ReservationNavigator = createStackNavigator();
+const FavoriteNavigator = createStackNavigator();
 const MainNavigator = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => (
@@ -230,6 +232,39 @@ function ReservationNavigatorScreen({ navigation }) {
 	);
 }
 
+function FavoriteNavigatorScreen({ navigation }) {
+	return (
+		<FavoriteNavigator.Navigator
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: "#512DA8",
+				},
+				headerTintColor: "#fff",
+				headerTitleStyle: {
+					color: "#fff",
+				},
+			}}
+		>
+			<FavoriteNavigator.Screen
+				name="My Favorites"
+				component={Favorite}
+				options={{
+					headerTitle: "My Favorites",
+					headerLeft: () => (
+						<Icon
+							containerStyle={{ marginLeft: 10 }}
+							name="menu"
+							size={24}
+							color="white"
+							onPress={() => navigation.toggleDrawer()}
+						/>
+					),
+				}}
+			/>
+		</FavoriteNavigator.Navigator>
+	);
+}
+
 function MainNavigatorScreen() {
 	return (
 		<MainNavigator.Navigator
@@ -279,6 +314,15 @@ function MainNavigatorScreen() {
 				options={{
 					drawerIcon: ({ tintColor, focused }) => (
 						<Icon name="cutlery" type="font-awesome" size={24} color={tintColor} />
+					),
+				}}
+			/>
+			<MainNavigator.Screen
+				name="My Favorites"
+				component={FavoriteNavigatorScreen}
+				options={{
+					drawerIcon: ({ tintColor, focused }) => (
+						<Icon name="heart" type="font-awesome" size={24} color={tintColor} />
 					),
 				}}
 			/>

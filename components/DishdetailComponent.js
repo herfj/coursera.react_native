@@ -37,7 +37,7 @@ function RenderComments(props) {
 					startingValue={item.rating}
 					style={styles.leftContainer}
 				/>
-				;<Text style={{ fontSize: 12 }}>{item.rating} Stars</Text>
+				<Text style={{ fontSize: 12 }}>{item.rating} Stars</Text>
 				<Text style={{ fontSize: 12 }}>{"-- " + item.author + ", " + item.date} </Text>
 			</View>
 		);
