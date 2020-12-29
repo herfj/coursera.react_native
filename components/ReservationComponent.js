@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect, useRef } from "react";
 import {
 	Text,
 	View,
@@ -13,6 +13,17 @@ import {
 import { Card } from "react-native-elements";
 import DatePicker from "react-native-datepicker";
 import * as Animatable from "react-native-animatable";
+import * as Notifications from "expo-notifications";
+import * as Permissions from "expo-permissions";
+import Constants from "expo-constants";
+
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: true,
+	}),
+});
 
 class Reservation extends Component {
 	constructor(props) {
@@ -53,6 +64,8 @@ class Reservation extends Component {
 					text: "OK",
 					onPress: () => {
 						this.resetForm();
+						this.schedulePushNotification(this.state.date);
+						// this.presentLocalNotification(this.state.date);
 					},
 				},
 			],
@@ -68,6 +81,80 @@ class Reservation extends Component {
 			showModal: false,
 		});
 	}
+
+	async schedulePushNotification(date) {
+		await this.obtainNotificationPermission();
+		await Notifications.scheduleNotificationAsync({
+			content: {
+				title: "Your Reservation",
+				body: "Reservation for " + date + " requested",
+				ios: {
+					sound: true,
+				},
+				android: {
+					sound: true,
+					vibrate: true,
+					color: "#512DA8",
+				},
+			},
+			trigger: { seconds: 2 },
+		});
+	}
+
+	async obtainNotificationPermission() {
+		let token;
+		if (Constants.isDevice) {
+			const { status: existingStatus } = await Permissions.getAsync(
+				Permissions.NOTIFICATIONS
+			);
+			let finalStatus = existingStatus;
+			if (existingStatus !== "granted") {
+				const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+				finalStatus = status;
+			}
+			if (finalStatus !== "granted") {
+				alert("Failed to get push token for push notification!");
+				return;
+			}
+			token = (await Notifications.getExpoPushTokenAsync()).data;
+			console.log(token);
+		} else {
+			alert("Must use physical device for Push Notifications");
+		}
+
+		if (Platform.OS === "android") {
+			Notifications.setNotificationChannelAsync("default", {
+				name: "default",
+				importance: Notifications.AndroidImportance.MAX,
+				vibrationPattern: [0, 250, 250, 250],
+				lightColor: "#FF231F7C",
+			});
+		}
+
+		// return permission;
+	}
+
+	async presentLocalNotification(date) {
+		await this.obtainNotificationPermission();
+		Notifications.scheduleLocalNotificationAsync({
+			content: {
+				title: "Your Reservation",
+				body: "Reservation for " + date + " requested",
+				ios: {
+					sound: true,
+					_displayInForeground: true,
+				},
+				android: {
+					sound: true,
+					vibrate: true,
+					color: "#512DA8",
+				},
+			},
+
+			trigger: { seconds: 2 },
+		});
+	}
+
 	render() {
 		return (
 			<ScrollView>
