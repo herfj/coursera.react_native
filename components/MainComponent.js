@@ -19,6 +19,7 @@ import SafeAreaView from "react-native-safe-area-view";
 import { connect } from "react-redux";
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from "../redux/ActionCreators";
 import Reservation from "./ReservationComponent";
+import Login from "./LoginComponent";
 
 const mapStateToProps = (state) => {
 	return {
@@ -42,6 +43,7 @@ const ContactUsNavigator = createStackNavigator();
 const AboutUsNavigator = createStackNavigator();
 const ReservationNavigator = createStackNavigator();
 const FavoriteNavigator = createStackNavigator();
+const LoginNavigator = createStackNavigator();
 const MainNavigator = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => (
@@ -265,6 +267,39 @@ function FavoriteNavigatorScreen({ navigation }) {
 	);
 }
 
+function LoginNavigatorScreen({ navigation }) {
+	return (
+		<LoginNavigator.Navigator
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: "#512DA8",
+				},
+				headerTintColor: "#fff",
+				headerTitleStyle: {
+					color: "#fff",
+				},
+			}}
+		>
+			<LoginNavigator.Screen
+				name="My Favorites"
+				component={Favorite}
+				options={{
+					headerTitle: "My Favorites",
+					headerLeft: () => (
+						<Icon
+							containerStyle={{ marginLeft: 10 }}
+							name="menu"
+							size={24}
+							color="white"
+							onPress={() => navigation.toggleDrawer()}
+						/>
+					),
+				}}
+			/>
+		</LoginNavigator.Navigator>
+	);
+}
+
 function MainNavigatorScreen() {
 	return (
 		<MainNavigator.Navigator
@@ -272,6 +307,15 @@ function MainNavigatorScreen() {
 			drawerContent={(props) => <CustomDrawerContent {...props} />}
 			drawerStyle={{ backgroundColor: "#D1C4E9" }}
 		>
+			<MainNavigator.Screen
+				name="Login"
+				component={LoginNavigatorScreen}
+				options={{
+					drawerIcon: ({ tintColor, focused }) => (
+						<Icon name="sign-in" type="font-awesome" size={24} color={tintColor} />
+					),
+				}}
+			/>
 			<MainNavigator.Screen
 				name="Home"
 				component={HomeNavigatorScreen}
