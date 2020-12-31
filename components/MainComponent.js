@@ -13,13 +13,14 @@ import Home from "./HomeComponent";
 import ContactUs from "./ContactComponent";
 import AboutUs from "./AboutComponent";
 import Favorite from "./FavoriteComponent";
-import { View, Platform, Text, ScrollView, Image, StyleSheet } from "react-native";
+import { View, Platform, Text, ScrollView, Image, StyleSheet, ToastAndroid } from "react-native";
 import { Icon } from "react-native-elements";
 import SafeAreaView from "react-native-safe-area-view";
 import { connect } from "react-redux";
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from "../redux/ActionCreators";
 import Reservation from "./ReservationComponent";
-import Login from "./LoginComponent";
+import MyTabs from "./LoginComponent";
+import NetInfo from "@react-native-community/netinfo";
 
 const mapStateToProps = (state) => {
 	return {
@@ -281,10 +282,10 @@ function LoginNavigatorScreen({ navigation }) {
 			}}
 		>
 			<LoginNavigator.Screen
-				name="My Favorites"
-				component={Login}
+				name="Login"
+				component={MyTabs}
 				options={{
-					headerTitle: "My Favorites",
+					headerTitle: "Login",
 					headerLeft: () => (
 						<Icon
 							containerStyle={{ marginLeft: 10 }}
@@ -380,7 +381,51 @@ class Main extends Component {
 		this.props.fetchComments();
 		this.props.fetchPromos();
 		this.props.fetchLeaders();
+
+		NetInfo.fetch().then((connectionInfo) => {
+			ToastAndroid.show(
+				"Initial Network Connectivity Type: " +
+					connectionInfo.type +
+					", effectiveType: " +
+					connectionInfo.effectiveType,
+				ToastAndroid.LONG
+			);
+		});
+
+		NetInfo.addEventListener((state) => {
+			this.handleConnectivityChange(state);
+		});
 	}
+
+	componentWillUnmount() {
+		// Subscribe
+		const unsubscribe = NetInfo.addEventListener((state) => {
+			console.log("Connection type", state.type);
+			console.log("Is connected?", state.isConnected);
+		});
+
+		// Unsubscribe
+		unsubscribe();
+	}
+
+	handleConnectivityChange = (connectionInfo) => {
+		switch (connectionInfo.type) {
+			case "none":
+				ToastAndroid.show("You are now offline!", ToastAndroid.LONG);
+				break;
+			case "wifi":
+				ToastAndroid.show("You are now connected to WiFi!", ToastAndroid.LONG);
+				break;
+			case "cellular":
+				ToastAndroid.show("You are now connected to Cellular!", ToastAndroid.LONG);
+				break;
+			case "unknown":
+				ToastAndroid.show("You now have unknown connection!", ToastAndroid.LONG);
+				break;
+			default:
+				break;
+		}
+	};
 	render() {
 		return (
 			<NavigationContainer>

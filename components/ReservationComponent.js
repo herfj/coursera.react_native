@@ -15,6 +15,7 @@ import DatePicker from "react-native-datepicker";
 import * as Animatable from "react-native-animatable";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
+import * as Calendar from "expo-calendar";
 import Constants from "expo-constants";
 
 Notifications.setNotificationHandler({
@@ -63,8 +64,10 @@ class Reservation extends Component {
 				{
 					text: "OK",
 					onPress: () => {
-						this.resetForm();
+						this.addReservationToCalendar(this.state.date);
 						this.schedulePushNotification(this.state.date);
+
+						this.resetForm();
 						// this.presentLocalNotification(this.state.date);
 					},
 				},
@@ -80,6 +83,56 @@ class Reservation extends Component {
 			date: "",
 			showModal: false,
 		});
+	}
+
+	async addReservationToCalendar(date) {
+		const { status } = await Calendar.requestCalendarPermissionsAsync();
+		const { status2 } = await Calendar.requestRemindersPermissionsAsync();
+		const ddate = new Date(date);
+		const startDate = new Date(
+			ddate.getYear(),
+			ddate.getMonth(),
+			ddate.getDay(),
+			ddate.getHours() + 1,
+			ddate.getMinutes(),
+			ddate.getSeconds(),
+			ddate.getMilliseconds()
+		);
+		const endDate = new Date(
+			ddate.getYear(),
+			ddate.getMonth(),
+			ddate.getDay(),
+			ddate.getHours() + 2,
+			ddate.getMinutes(),
+			ddate.getSeconds(),
+			ddate.getMilliseconds()
+		);
+		// if (status == "granted" && status2 == "granted") {
+		const calendars = await Calendar.getCalendarsAsync();
+		const defaultCalendarSource = calendars[0];
+
+		const id = Calendar.createEventAsync(defaultCalendarSource.id, {
+			title: "Con Fusion Table Reservation",
+			startDate: startDate,
+			endDate: endDate,
+			location: "121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong",
+		});
+		await Notifications.scheduleNotificationAsync({
+			content: {
+				title: "DATA",
+				body: "id: " + id + " " + "startDate: " + startDate + " " + "endDate: " + endDate,
+				ios: {
+					sound: true,
+				},
+				android: {
+					sound: true,
+					vibrate: true,
+					color: "#512DA8",
+				},
+			},
+			trigger: { seconds: 2 },
+		});
+		// }
 	}
 
 	async schedulePushNotification(date) {
